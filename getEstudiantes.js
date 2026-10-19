@@ -8,7 +8,7 @@ function obtenerEstudiantes(req, res) {
 
     fs.readFile(rutaArchivo, 'utf8', (err, data) => {
         if (err) {
-            res.writeHead(500, { 'Content-Type': 'application/json' });
+            res.writeHead(404, { 'Content-Type': 'application/json' });
             res.end(JSON.stringify({ mensaje: 'Error al leer la base de datos' }));
             return;
         }

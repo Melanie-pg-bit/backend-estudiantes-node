@@ -15,7 +15,7 @@ function manejarEstaticos(req, res) {
             res.end(JSON.stringify({ mensaje: 'Archivo estático no encontrado' }));
         } else {
             res.writeHead(200, { 'Content-Type': contentType });
-            res.end(content, 'utf-8');
+            res.end(JSON.stringify({ mensaje: '404 Not Found' }));
         }
     });
 }
