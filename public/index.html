@@ -1,12 +1,56 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Servidor de Estudiantes</title>
+    <link rel="stylesheet" href="/styles.css">
 </head>
 <body>
+
     <h1>Servidor de Estudiantes</h1>
-    <p>Mi primer servidor con Node.js</p>
+
+    <div class="box">
+        <h3>Registrar Estudiante</h3>
+        <form id="formEstudiante">
+            <input type="text" id="nombreInput" placeholder="Nombre del estudiante" required>
+            <button type="submit">Guardar</button>
+        </form>
+    </div>
+
+    <div class="box">
+        <h3>Lista de Estudiantes</h3>
+        <ul id="listaEstudiantes"></ul>
+    </div>
+
+    <script>
+        async function cargarEstudiantes() {
+            const res = await fetch('/api/estudiantes');
+            const estudiantes = await res.json();
+            const lista = document.getElementById('listaEstudiantes');
+            lista.innerHTML = '';
+
+            estudiantes.forEach(est => {
+                const li = document.createElement('li');
+                li.textContent = est.nombre || JSON.stringify(est);
+                lista.appendChild(li);
+            });
+        }
+
+        document.getElementById('formEstudiante').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const input = document.getElementById('nombreInput');
+            
+            await fetch('/api/estudiantes', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ nombre: input.value })
+            });
+
+            input.value = '';
+            cargarEstudiantes();
+        });
+
+        cargarEstudiantes();
+    </script>
 </body>
 </html>
