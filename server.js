@@ -1,18 +1,23 @@
 const http = require('http');
-const { manejarEstaticos } = require('./staticHandler');
 const { obtenerEstudiantes } = require('./getEstudiantes');
 const { guardarEstudiante } = require('./postEstudiantes');
+const { manejarEstaticos } = require('./staticHandler');
+
+const PORT = 3000;
 
 const server = http.createServer((req, res) => {
     if (req.url === '/api/estudiantes' && req.method === 'GET') {
-        obtenerEstudiantes(req, res);
-    } else if (req.url === '/api/estudiantes' && req.method === 'POST') {
-        guardarEstudiante(req, res);
-    } else {
-        manejarEstaticos(req, res);
+        return obtenerEstudiantes(req, res);
     }
+
+    if (req.url === '/api/estudiantes' && req.method === 'POST') {
+        return guardarEstudiante(req, res);
+    }
+
+    // Cualquier otra ruta pasa al manejador de archivos de la carpeta public
+    manejarEstaticos(req, res);
 });
 
-server.listen(3000, () => {
-    console.log('Servidor corriendo en http://localhost:3000');
+server.listen(PORT, () => {
+    console.log(`Servidor ejecutándose en http://localhost:${PORT}`);
 });

@@ -22,35 +22,58 @@
         <ul id="listaEstudiantes"></ul>
     </div>
 
-    <script>
-        async function cargarEstudiantes() {
+   <script>
+    async function cargarEstudiantes() {
+        try {
             const res = await fetch('/api/estudiantes');
             const estudiantes = await res.json();
             const lista = document.getElementById('listaEstudiantes');
             lista.innerHTML = '';
 
+            if (!Array.isArray(estudiantes) || estudiantes.length === 0) {
+                lista.innerHTML = '<li>No hay estudiantes aún</li>';
+                return;
+            }
+
             estudiantes.forEach(est => {
                 const li = document.createElement('li');
-                li.textContent = est.nombre || JSON.stringify(est);
+                li.textContent = typeof est === 'object' ? (est.nombre || JSON.stringify(est)) : est;
                 lista.appendChild(li);
             });
+        } catch (err) {
+            console.error("Error al obtener la lista:", err);
         }
+    }
 
-        document.getElementById('formEstudiante').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const input = document.getElementById('nombreInput');
-            
-            await fetch('/api/estudiantes', {
+    document.getElementById('formEstudiante').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const input = document.getElementById('nombreInput');
+        const nombreVal = input.value.trim();
+
+        if (!nombreVal) return;
+
+        try {
+            const respuesta = await fetch('/api/estudiantes', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ nombre: input.value })
+                body: JSON.stringify({ nombre: nombreVal })
             });
 
-            input.value = '';
-            cargarEstudiantes();
-        });
+            const resultado = await respuesta.json();
 
-        cargarEstudiantes();
-    </script>
+            if (respuesta.ok) {
+                input.value = '';
+                cargarEstudiantes();
+            } else {
+                // Muestra exactamente el motivo del error en una ventana flotante
+                alert("ERROR DEL SERVIDOR: " + (resultado.detalle || JSON.stringify(resultado)));
+            }
+        } catch (err) {
+            alert("Error de conexión: " + err.message);
+        }
+    });
+
+    cargarEstudiantes();
+</script>
 </body>
 </html>
