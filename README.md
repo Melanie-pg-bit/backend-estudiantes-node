@@ -1,4 +1,4 @@
-# backend-estudiantes-node
+# LAB 05: backend-estudiantes-node
 
 
 Servidor HTTP en Node.js con módulos nativos (`http`, `fs`, `path`), sin frameworks. Sirve archivos estáticos y expone una API básica para consultar y registrar estudiantes, con persistencia en un archivo JSON.
